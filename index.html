@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>前端读取文件内容</title>
+</head>
+<body>
+<input type="file" id="fileSubmit" />
+</body>
+<script>
+  document.getElementById('fileSubmit').addEventListener('change',function(){
+    readFile(this,function(data){
+      console.log(data);
+    }, function() {
+      alert('解析文件出错');
+    })
+  });
+  function readFile(input,sc,ec) {
+    //支持chrome IE10
+    if (window.FileReader) {
+      var file = input.files[0];
+      filename = file.name.split(".")[0];
+      var reader = new FileReader();
+      reader.onload = function() {
+          sc(this.result);
+      };
+      reader.readAsText(file);
+    }
+    //支持IE 7 8 9 10
+    else if (typeof window.ActiveXObject != 'undefined'){
+      var xmlDoc;
+      xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+      xmlDoc.async = false;
+      xmlDoc.load(input.value);
+      sc(xmlDoc);
+    }
+    //支持FF
+    else if (document.implementation && document.implementation.createDocument) {
+      var xmlDoc;
+      xmlDoc = document.implementation.createDocument("", "", null);
+      xmlDoc.async = false;
+      xmlDoc.load(input.value);
+      sc(xmlDoc);
+    } else {
+      ec();
+    }
+  }
+</script>
+
+</html>
